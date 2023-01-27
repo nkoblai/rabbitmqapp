@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -26,12 +25,12 @@ func main() {
 
 	logger, err := zap.NewProduction()
 	if err != nil {
-		log.Fatalf("can't create logger: %e\n", err)
+		log.Fatalf("can't create logger: %v\n", err)
 	}
 
 	cfg, err := config.NewRabbitMQ()
 	if err != nil {
-		logger.Fatal("wrong request type", zap.Error(fmt.Errorf("can't create config: %w", err)))
+		logger.Fatal("can't create config", zap.Error(err))
 	}
 
 	rabbitMQ, err := queue.NewRabbitMQ(logger, cfg)
@@ -52,5 +51,4 @@ func main() {
 	if err = service.New(logger, serverLogFile, rabbitMQ).Process(ctx); err != nil {
 		logger.Fatal("can't start processing requests", zap.Error(err))
 	}
-
 }
